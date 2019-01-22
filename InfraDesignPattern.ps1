@@ -297,7 +297,7 @@ Class InfraFactory
     [InfraFactory] $infraInstance =  [InfraFactory]::new()
     [RebootInfra] $rebootinfra1 =  $infraInstance.createInstacne("SerialR")
     $rebootinfra1.RebootCI()
-    Write-Verbose "Writing verbose for git commit in progress"
+    Write-Verbose "ignore  changes"
     } 
 
 main
