@@ -297,7 +297,9 @@ Class InfraFactory
     [InfraFactory] $infraInstance =  [InfraFactory]::new()
     [RebootInfra] $rebootinfra1 =  $infraInstance.createInstacne("SerialR")
     $rebootinfra1.RebootCI("localhost")
+    
     Write-Verbose "testing git"
+    
     } 
 
 main
