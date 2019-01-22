@@ -280,7 +280,7 @@ Class InfraFactory
         return [InfraFactory]::[RebootInfra].Where({$_ -is $o})
      }
 
-     static [object] getByName([String] $Name)
+     static [object] getByName([String] $Name) ## i the method is called by name
      {
          return [InfraFactory]::[RebootInfra].Where({$_.Name -eq $Name})
      }
@@ -296,8 +296,8 @@ Class InfraFactory
     {
     [InfraFactory] $infraInstance =  [InfraFactory]::new()
     [RebootInfra] $rebootinfra1 =  $infraInstance.createInstacne("SerialR")
-    $rebootinfra1.RebootCI()
-    Write-Verbose "ignore  changes"
+    $rebootinfra1.RebootCI("localhost")
+    Write-Verbose "We have used localhost as our first change"
     } 
 
 main
