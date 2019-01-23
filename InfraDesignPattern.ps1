@@ -258,7 +258,7 @@ Class InfraFactory {
 function main() {
     [InfraFactory] $infraInstance = [InfraFactory]::new()
     [RebootInfra] $rebootinfra1 = $infraInstance.createInstacne("SerialR"  ,"Localhost")
-    #$rebootinfra1.RebootCI("localhost")
+    $rebootinfra1.RebootCI("aaa", "bbb")
 } 
 main
 
