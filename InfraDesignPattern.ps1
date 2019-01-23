@@ -27,13 +27,12 @@ Creation date - 31-08-2018
 #>
 using namespace System.Collections.Generic
 using namespace System.Collections.Specialized
+using namespace System.Management.Automation
 
 Class RebootInfra {
     #region class members declared below
     [string] $CurrentCI 
     static [int] $value
-    static [string] $reportpath
-    static [string] $postpath
     static [string] $ServerInfoPath
     # ordered dictionaries for pre and post comparison 
     $predisk = [System.Collections.Specialized.OrderedDictionary]::new()
@@ -42,25 +41,28 @@ Class RebootInfra {
     static [string]$password
     static [string] $Credential
     #endregion
+    [string] $currentHost
+    RebootInfra(){
 
-    RebootInfra($currentHost) {
+    }
+    RebootInfra([string] $currentHost) {
         if ($this.GetType() -eq [RebootInfra]) {
             throw "Please do not instantiate this class"
         }
+        $this.currentHost = $currentHost
+        Write-Host "In Base class constructr"
     }
 
     ClearFile() {
-        if ($this.GetType() -eq [RebootInfra]) {
+       
             throw "Please do not instantiate this class"
-        }
         ## remember to make this code abstract
         Write-Verbose "Clear file code to be written here in derived class"
     }
 
     get2k8Report() {
-        if ($this.GetType() -eq [RebootInfra]) {
+       
             throw "Please do not instantiate this class"
-        }
         ## remember to make this code abstract this function will work in conjunction with createreport() method .. Static members TBD  
         Write-Host "2k8 report code to be added here in derived class"
     }
@@ -113,9 +115,12 @@ Class RebootInfra {
 
 Class SerialR : RebootInfra {
     
-    Serial([string] $currentHost) {
-        $this.$currentHost = $currentHost
+    SerialR([string] $currentHost): Base($currentHost) {
+        Write-Host "In child class constructor"
     }
+
+    SerialR(): Base()
+    {}
     [pscredential] ConvertCredential($user, $password) { ## this method converts user name and password to credential object
         $password = $password | ConvertTo-SecureString -AsPlainText -Force
         $cred = New-Object System.Management.Automation.PSCredential($user, $password)
@@ -249,19 +254,19 @@ Class InfraFactory {
         return [InfraFactory]::[RebootInfra].Where( {$_.Name -eq $Name})
     }
 
-    [RebootInfra] createInstacne( $type) {
-        return (New-Object -TypeName $type -ArgumentList "Localhost" )
+    [RebootInfra] createInstacne([string] $type, [string] $currentHost) {
+        return ( [SerialR]::new($currentHost) )
     }
    
 }
 
-function main($c , $d) {
+# client code below
+function main() {
     [InfraFactory] $infraInstance = [InfraFactory]::new()
-    [RebootInfra] $rebootinfra1 = $infraInstance.createInstacne("SerialR")
-    $rebootinfra1.RebootCI("localhost")
-    
-    Write-Verbose "testing git"
-    
+    [RebootInfra] $rebootinfra1 = $infraInstance.createInstacne("SerialR"  ,"Localhost")
+    #$rebootinfra1.RebootCI("localhost")
 } 
+main
 
-main -c 2 -d 3
+
+
