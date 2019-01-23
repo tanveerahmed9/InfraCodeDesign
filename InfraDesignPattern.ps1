@@ -44,7 +44,7 @@ Class RebootInfra
       static [string] $Credential
       #endregion
 
-      RebootInfra()
+      RebootInfra($currentHost)
       {
           if ($this.GetType() -eq [RebootInfra])
           {
@@ -132,7 +132,7 @@ Class RebootInfra
 Class SerialR : RebootInfra
 {
     
-    Serial($currentHost)
+    Serial([string] $currentHost)
     {
         $this.$currentHost = $currentHost
     }
@@ -292,7 +292,7 @@ Class InfraFactory
    
 }
 
-   function main()
+   function main($c , $d)
     {
     [InfraFactory] $infraInstance =  [InfraFactory]::new()
     [RebootInfra] $rebootinfra1 =  $infraInstance.createInstacne("SerialR")
@@ -302,4 +302,4 @@ Class InfraFactory
     
     } 
 
-main
+main -c 2 -d 3
