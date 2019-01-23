@@ -83,13 +83,7 @@ Class RebootInfra {
         Write-Host "Reboot code to be added here in derived class"
     }
     onlinedisk() {
-        if ($this.GetType() -eq [RebootInfra]) {
-            throw "Please do not instantiate this class"
-        }
-        ## remember to make this code abstract
-        if ($this.GetType() -eq [RebootInfra]) {
-            throw "Please do not instantiate this class"
-        }
+        throw "Please do not instantiate this class"
         Write-Verbose "Online disk code to be added here"
     }
 
