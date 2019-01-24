@@ -58,6 +58,7 @@ Class RebootInfra {
             throw "Please do not instantiate this class"
         ## remember to make this code abstract
         Write-Verbose "Clear file code to be written here in derived class"
+        write-verose "making changes in remote reporsitory"
     }
 
     get2k8Report() {
