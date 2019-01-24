@@ -230,7 +230,7 @@ Class SerialR : RebootInfra {
 
 Class ParallelR : RebootInfra {
     
-    
+    ## write parallel implementation here
 }
 
 Class customR : RebootInfra {
