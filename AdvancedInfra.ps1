@@ -43,7 +43,7 @@ $null = $posh.AddArgument(1)
 [void] ($Handles.Add($posh.BeginInvoke()))
 }
 $start = Get-Date
-while (($handles | Where IsCompleted -eq $false).Count)
+while (($handles | Where-Object IsCompleted -eq $false).Count)
 {
 Start-Sleep -Milliseconds 100
 }
@@ -64,4 +64,9 @@ $jsonBody = $body | ConvertTo-Json
 
  Invoke-RestMethod -Method GET -Uri https://jsonplaceholder.typicode.com/posts # -Body $jsonBody -ContentType "Application/json"
 
+
+$polarisPath = [System.IO.Path]::GetTempFileName() -replace'\.tmp','\Polaris'
+git clone "https://github.com/powershell/polaris" $polarisPath
+Import-Module $polarisPath
+$request
 
