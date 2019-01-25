@@ -23,4 +23,34 @@ function use-pipe {
 }
     
 
+$proc = Get-CimInstance -ClassName CIM_Processor
+$runspacepool = [runspacefactory]::CreateRunspacePool(1,$proc.NumberOfLogicalProcessors, $Host)
+$runspacepool.Open()
+# We need to collect the handles to query them later on
+$Handles = New-Object -TypeName System.Collections.ArrayList
+# Queue 1000 jobs
+1..1000 | Foreach-Object {$posh = [powershell]::Create()
+$posh.RunspacePool = $runspacepool
+# Add your script and parameters. Note that your script block may of
+
+$null = $posh.AddScript( {
+param
+(
+[int]$Seconds
+)
+Start-Sleep @PSBoundParameters})
+$null = $posh.AddArgument(1)
+[void] ($Handles.Add($posh.BeginInvoke()))
+}
+$start = Get-Date
+while (($handles | Where IsCompleted -eq $false).Count)
+{
+Start-Sleep -Milliseconds 100
+}
+$end = Get-Date
+Write-Host ('It took {0}s to sleep 1000*1s in up to {1} parallel runspaces'-f ($end -$start).TotalSeconds, $proc.NumberOfLogicalProcessors)
+
+# When done: Clean up
+$runspacepool.Close()
+$runspacepool.Dispose()
 
