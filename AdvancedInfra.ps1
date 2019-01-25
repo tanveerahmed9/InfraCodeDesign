@@ -54,3 +54,14 @@ Write-Host ('It took {0}s to sleep 1000*1s in up to {1} parallel runspaces'-f ($
 $runspacepool.Close()
 $runspacepool.Dispose()
 
+$body = @{
+    title = 'Tanveers post'
+    body = 'This is test post from PowerShell'
+    userID = '123'
+
+}
+$jsonBody = $body | ConvertTo-Json
+
+ Invoke-RestMethod -Method GET -Uri https://jsonplaceholder.typicode.com/posts # -Body $jsonBody -ContentType "Application/json"
+
+
