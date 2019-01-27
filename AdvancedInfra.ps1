@@ -67,6 +67,8 @@ $jsonBody = $body | ConvertTo-Json
 ## hotfix implemented for story 423SN
 # hotfix 423aSN
 
+
+
 $polarisPath = [System.IO.Path]::GetTempFileName() -replace'\.tmp','\Polaris'
 git clone "https://github.com/powershell/polaris" $polarisPath
 Import-Module $polarisPath
