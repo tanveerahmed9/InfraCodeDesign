@@ -63,7 +63,7 @@ $body = @{
 $jsonBody = $body | ConvertTo-Json
 
  Invoke-RestMethod -Method GET -Uri https://jsonplaceholder.typicode.com/posts # -Body $jsonBody -ContentType "Application/json"
-
+## hotfix implemented for story 423SN
 
 $polarisPath = [System.IO.Path]::GetTempFileName() -replace'\.tmp','\Polaris'
 git clone "https://github.com/powershell/polaris" $polarisPath
