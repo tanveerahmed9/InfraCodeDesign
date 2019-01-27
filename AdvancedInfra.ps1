@@ -23,6 +23,7 @@ function use-pipe {
 }
     
 ## git branching test 
+#region extra code
 $proc = Get-CimInstance -ClassName CIM_Processor
 $runspacepool = [runspacefactory]::CreateRunspacePool(1,$proc.NumberOfLogicalProcessors, $Host)
 $runspacepool.Open()
@@ -63,10 +64,5 @@ $body = @{
 $jsonBody = $body | ConvertTo-Json
 
  Invoke-RestMethod -Method GET -Uri https://jsonplaceholder.typicode.com/posts # -Body $jsonBody -ContentType "Application/json"
-
-
-$polarisPath = [System.IO.Path]::GetTempFileName() -replace'\.tmp','\Polaris'
-git clone "https://github.com/powershell/polaris" $polarisPath
-Import-Module $polarisPath
-$request
+#endregion 
 
