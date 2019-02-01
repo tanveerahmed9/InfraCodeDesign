@@ -1,10 +1,10 @@
 $ModuleManifestName = 'inframod.psd1'
 $ModuleManifestPath = "$PSScriptRoot\..\$ModuleManifestName"
 
-Describe 'Module Manifest Tests' {
-    It 'Passes Test-ModuleManifest' {
-        Test-ModuleManifest -Path $ModuleManifestPath | Should Not BeNullOrEmpty
-        $? | Should Be $true
+Describe 'get2k12Report'
+{
+    It -Name 'Fetches 2k12 Report' -Test
+    {
+        Mock -CommandName get2k12Report
     }
 }
-
