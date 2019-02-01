@@ -5,7 +5,7 @@
 This script is used for parallel reboot of a list of servers with report and auto remediation
 
 .Description
-Below code is used for  reboot of a list of servers with report and auto remediation (if required). pre and post report is generated using this 
+Below code is used for  reboot of a list of servers with report and auto remediation (if required). pre and post report is generated using this
 which will have detail information of the status of the servers.
 
 .INPUT
@@ -31,10 +31,10 @@ using namespace System.Management.Automation
 
 Class RebootInfra {
     #region class members declared below
-    [string] $CurrentCI 
+    [string] $CurrentCI
     static [int] $value
     static [string] $ServerInfoPath
-    # ordered dictionaries for pre and post comparison 
+    # ordered dictionaries for pre and post comparison
     $predisk = [System.Collections.Specialized.OrderedDictionary]::new()
     $postDisk = [System.Collections.Specialized.OrderedDictionary]::new()
     static [String] $user
@@ -54,7 +54,7 @@ Class RebootInfra {
     }
 
     ClearFile() {
-       
+
             throw "Please do not instantiate this class"
         ## remember to make this code abstract
         Write-Verbose "Clear file code to be written here in derived class"
@@ -62,9 +62,9 @@ Class RebootInfra {
     }
 
     get2k8Report() {
-       
+
             throw "Please do not instantiate this class"
-        ## remember to make this code abstract this function will work in conjunction with createreport() method .. Static members TBD  
+        ## remember to make this code abstract this function will work in conjunction with createreport() method .. Static members TBD
         Write-Host "2k8 report code to be added here in derived class"
     }
 
@@ -109,7 +109,7 @@ Class RebootInfra {
 
 
 Class SerialR : RebootInfra {
-    
+
     SerialR([string] $currentHost): Base($currentHost) {
         Write-Host "In child class constructor"
     }
@@ -143,10 +143,10 @@ Class SerialR : RebootInfra {
         $this.AppendReport($pathFile, "$value .Below is the drive information for the server `r")
         $disk2 = $disk2 |Select-Object-Object-Object Driveletter, healthstatus, size
         $this.AppendReport($pathFile, $disk2)
-        return $value 
+        return $value
     }
 
-    AppendReport($pathFile, $content) { ## this method will append a content to an existing report 
+    AppendReport($pathFile, $content) { ## this method will append a content to an existing report
         Add-Content -Value $content -Path $pathFile
     }
 
@@ -157,16 +157,16 @@ Class SerialR : RebootInfra {
         $value = $Value + 1
 
         $disk1 = Invoke-Command -ComputerName $currentHost -ScriptBlock {
-            $disk1 = Get-WmiObject win32_volume |Select-Object Name, capacity, Freespace, BootVolume, FileSystem 
+            $disk1 = Get-WmiObject win32_volume |Select-Object Name, capacity, Freespace, BootVolume, FileSystem
             return $disk1
         } -Credential $cred
 
-        $disk1 = $disk1 |Select-Object Name, capacity, Freespace, BootVolume, FileSystem 
+        $disk1 = $disk1 |Select-Object Name, capacity, Freespace, BootVolume, FileSystem
         $this.AppendReport($pathFile, $disk1)
-        return $value 
+        return $value
     }
 
-    ClearFile($postpath, $ServerInfoPath) { # this method clears unnecessary data from the report file being sent to end user 
+    ClearFile($postpath, $ServerInfoPath) { # this method clears unnecessary data from the report file being sent to end user
         (Get-Content -Path $serverInfoPath).Replace('{', ' ') |Set-Content -Path $serverInfoPath
         (Get-Content -Path $serverInfoPath).Replace('@', ' ') |Set-Content -Path $serverInfoPath
         (Get-Content -Path $serverInfoPath).Replace('}', ' ') |Set-Content -Path $serverInfoPath
@@ -175,19 +175,19 @@ Class SerialR : RebootInfra {
         (Get-Content -Path $postPath).Replace('@', ' ') |Set-Content -Path $postPath
         (Get-Content -Path $postPath).Replace('}', ' ') |Set-Content -Path $postPath
         (Get-Content -Path $postPath).Replace('Dummy', ' ') |Set-Content -Path $postPath
-        
+
     }
 
     RebootCI($currentHost, $cred) { # this method reboots the CI by using invoke-command
         # actual code for reboot
         try {
             Write-verbose "inside reboot .. rebooting $currenthost"
-            $rebootC = invoke-command -ComputerName $currenthost -ScriptBlock { 
+            $rebootC = invoke-command -ComputerName $currenthost -ScriptBlock {
                 $reboot = Restart-Computer  -Force
                 return $reboot
             } -Credential $cred
         }
- 
+
         catch {
             ## if any issue found unnecessary data will be removed from the file
             $this.ClearFile()
@@ -198,12 +198,12 @@ Class SerialR : RebootInfra {
         $OutputPosition = 0
         try {
             $finalDisk = Invoke-Command -ErrorAction SilentlyContinue -ComputerName $currentHost -ScriptBlock {
-                $onlineDisk = "list disk" | diskpart | Where-Object {$_ -notmatch "offline"} 
+                $onlineDisk = "list disk" | diskpart | Where-Object {$_ -notmatch "offline"}
                 $filteredDisk = @()
                 ### taking out all the disks from the string as the output style remains constant
                 foreach ($onlineDiskS in $onlineDisk) {
                     if ($OutputPosition -ge 9) {$filteredDisk = $filteredDisk + $onlineDiskS}
-                    $OutputPosition += 1           
+                    $OutputPosition += 1
                 }
 
                 $finalDisk = @()
@@ -219,7 +219,7 @@ Class SerialR : RebootInfra {
             foreach ($finaldiskt in $finaldisk) {
                 $finaldiskcs += $finaldiskt + ","
             }
-        
+
             $diskstage.Add("$currentHost", "$finaldiskcs")
 
             ##return $diskstage retruntype to be established once we have call finalized
@@ -230,7 +230,7 @@ Class SerialR : RebootInfra {
 }
 
 Class ParallelR : RebootInfra {
-    
+
     ## write parallel implementation here
     ## git test
     ## git test 2 push
@@ -242,7 +242,7 @@ Class customR : RebootInfra {
 
 Class InfraFactory {
     ## Factory class for creating instance
-    static [RebootInfra] $CIS 
+    static [RebootInfra] $CIS
     static [object] getbytype([object] $o) {
         return [InfraFactory]::[RebootInfra].Where( {$_ -is $o})
     }
@@ -254,7 +254,7 @@ Class InfraFactory {
     [RebootInfra] createInstacne([string] $type, [string] $currentHost) {
         return ( [SerialR]::new($currentHost) )
     }
-   
+
 }
 
 # client code below
@@ -262,7 +262,7 @@ function main() {
     [InfraFactory] $infraInstance = [InfraFactory]::new()
     [RebootInfra] $rebootinfra1 = $infraInstance.createInstacne("SerialR"  ,"Localhost")
     $rebootinfra1.RebootCI("aaa", "bbb")
-} 
+}
 main
 #undone
 
