@@ -3,26 +3,26 @@ function use-pipe {
     [CmdletBinding()]
     param (
        [parameter(ValueFromPipeline)]
-       [string] 
+       [string]
        $pObj
     )
-    
+
     begin {
        $lObj =  New-Object "System.Collections.Generic.List[Int]"
        Write-Verbose "begin block"
     }
-    
+
     process {
         $lObj.Add($pobj)
     }
-    
+
     end {
         Write-Verbose "end block"
         return $lObj
     }
 }
-    
-## git branching test 
+
+## git branching test
 $proc = Get-CimInstance -ClassName CIM_Processor
 $runspacepool = [runspacefactory]::CreateRunspacePool(1,$proc.NumberOfLogicalProcessors, $Host)
 $runspacepool.Open()
@@ -67,7 +67,7 @@ $jsonBody = $body | ConvertTo-Json
 ## hotfix implemented for story 423SN
 # hotfix 423aSN
 
-
+## demo on GIT
 
 $polarisPath = [System.IO.Path]::GetTempFileName() -replace'\.tmp','\Polaris'
 git clone "https://github.com/powershell/polaris" $polarisPath
