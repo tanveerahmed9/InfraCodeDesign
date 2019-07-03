@@ -1,10 +1,9 @@
-$ModuleManifestName = 'inframod.psd1'
-$ModuleManifestPath = "$PSScriptRoot\..\$ModuleManifestName"
-
-Describe 'get2k12Report'
-{
-    It -Name 'Fetches 2k12 Report' -Test
-    {
-        Mock -CommandName get2k12Report
+Import-Module .\functionModule.psm1
+Describe 'function test 2 demo'{
+    It -Name 'Checks 5'{
+     Mock -CommandName f2 -MockWith {"admin"}
+        f1 | should be 4
+        Assert-VerifiableMock -Verbose
     }
+
 }
