@@ -10,13 +10,19 @@ if ($false)
     $l = f2
 }
 $testData += $l
-$count = $testData.count
-return "$count"
+
+return $testData
 }
 function f2()
 {
 
 }
 
+function f3()
+{
+  $k =   f2 # added for mock test
+ return "4"
+}
 
-Export-ModuleMember -Function f1,f2
+
+Export-ModuleMember -Function f1,f2,f3
