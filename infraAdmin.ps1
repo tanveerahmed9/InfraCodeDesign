@@ -285,7 +285,8 @@ chapter 7 on why we added $PSCmdlet instead of a boolean
 
 #region property wrapping (similar to overriding in C#)
 
-$item = get-item C:\
+$item = get-item C:\abc
+$item.PSObject
 
 
 
