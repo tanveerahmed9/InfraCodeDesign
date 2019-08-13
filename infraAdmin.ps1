@@ -285,10 +285,104 @@ chapter 7 on why we added $PSCmdlet instead of a boolean
 
 #region property wrapping (similar to overriding in C#)
 
+#region adding type (similiar to add-type cmdlet)
 $item = get-item C:\abc
-$item.PSObject
+[int] $myVar = 10
+$Customnoteproperty = New-Object System.Management.Automation.PSVariableProperty -ArgumentList (Get-Variable myVar)
+$customVariableproperty = [psvariableproperty]::new('get-variable myVar')
+$item.PSObject.Members.Add($Customnoteproperty)
+$item.PSObject.Members.Add($customVariableproperty)
 
-
-
-
+$item.PSObject.Members | Where-Object {$_.name -like '*Note*'}
+$item.myvar
 #endRegion
+
+#region Adding new members to a type instead of instance (scriptmethod to an object)
+$sumScBlock = {
+  $r = 0
+  foreach($s in $this){$r += $s}
+  $r
+}
+Update-TypeData -TypeName "System.Array" -MemberType ScriptMethod -MemberName "Sum" -Value $sumScBlock
+update-typeData .\Customtype.ps1xml
+
+<#notes
+We can either create a scripmethod and add to the basic Data type or we can create and XML
+and import the XML in the session for using the extended member in the Data type
+
+When defining dynamic types b you need to supply Update-TypeData with several
+pieces of information:
+■■ Type to be modified
+■■ Name of the new member
+■■ Type of the new member
+■■ Value or code used to define the new member
+
+#>
+
+#endregion
+
+#region demonstratio of $executionContext
+$ec = $executionContext.InvokeCommand  | gm # expandstring(), invokescript() , newscriptblock()
+
+#expandstring()
+$a = 55
+$statement = 'a is $a'
+"$statement"
+$executionContext.InvokeCommand.ExpandString($statement) # expandstring helps in resolving var in runtime
+
+
+#invokescript()
+#same as Invoke-Expression
+
+#attaching scripblock to  the session
+
+$sb = {1..10 | foreach{($_*2)}}
+$executionContext.InvokeCommand.NewScriptBlock($sb)
+& $sb
+
+#using type accelarator
+
+$SB11 = [scriptblock]::Create($sb)
+& $SB11
+
+#endregion
+
+#region function Drive
+$x = 5
+$y = 9
+$Function:myfunc = "$x*$y"
+myfunc
+
+$Function:expandedFunc = "$Function:myfunc*296" # further expansion of the function using
+#function drive
+expandedfunc
+
+
+#endregion
+
+#region Add type (C# code coerage)
+Add-Type @'
+using System;
+public static class Example1
+{
+public static string Reverse(string s)
+{
+Char[] sc = s.ToCharArray();
+Array.Reverse(sc);
+return new string(sc);
+}
+}
+'@
+
+$string = "Reverse This"
+$csObj = [Example1]::Reverse($string)
+
+
+#endregion
+
+#region cmdletBinding examples (under the hood)
+
+function myFunction {[CmdletBinding()]param() "Explicitly creates advanced functions"}
+Get-Command myFunction -Syntax
+
+#endregion
