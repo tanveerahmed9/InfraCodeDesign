@@ -385,4 +385,207 @@ $csObj = [Example1]::Reverse($string)
 function myFunction {[CmdletBinding()]param() "Explicitly creates advanced functions"}
 Get-Command myFunction -Syntax
 
+
+function stop-processCustom{
+  [CmdletBinding(SupportsShouldProcess=$true)]
+  param(
+    [parameter(Mandatory=$true)]
+    [string]$pattern
+  )
+  $process = gwmi win32_process | where name -like "*$pattern*"
+
+  if ($pscmdlet.ShouldProcess("Process $($process.Name) with ID : $($process.processID) will be stopped"))
+  {
+    $process.terminate()
+  }
+
+}
+
+stop-processCustom -pattern "Notepad" -WhatIf
+
+stop-processCustom -pattern "Notepad"
+#supports paging demo
+
+
+<#
+Following values attributes can be specified in cmdlet bindings
+
+1. ConfirmImpact
+when the value of confirmImpact is higher than the confirm preference variable
+shouldprocess
+
+2. DefaultParameterSetName
+
+3. HelpUri
+
+Link to Online help
+
+4. Supportspaging
+
+adds the First, Skip, and IncludeTotalCount
+
+$pscmdlet.pagingparameters.Skip
+$pscmdlet.pagingparameters.First
+$pscmdlet.pagingparameters.includetotalcount
+$pscmdlet.pagingparameters.newtotalcount()
+
+5. SupportsShouldProcess
+
+enables -confirm and -whatif parameters
+see example stop-process for demo
+
+#>
+
+
+
+#my change1
+
+#my change22
+#endregion
+
+
+#region testing output type attribute
+function set-outputcheck{
+[CmdletBinding(DefaultParameterSetName='int')]
+[OutputType('asInt', [int])]
+[OutputType('asString', [String])]
+[OutputType('asDouble', ([double], [single]))]
+[OutputType('lie', [int])]
+
+param(
+  [parameter(ParameterSetName='asInt')] [Switch] $asInt,
+  [parameter(ParameterSetName='asString')] [Switch] $asString,
+  [parameter(ParameterSetName='asDouble')] [Switch] $asDouble,
+  [parameter(ParameterSetName='lie')] [Switch] $aslie
+)
+
+Write-Host "Parameter set: $($PSCmdlet.ParameterSetName)"
+switch ($PSCmdlet.ParameterSetName) {
+'asInt' { 1 ; break }
+'asString' { '1' ; break }
+'asDouble' { 1.0 ; break }
+'lie' { 'Hello there'; break } }
+}
+
+(set-outputcheck -asDouble ).GetType()
+
+(Get-Command set-outputcheck).OutputType
+
+<#
+Parameter set name is related to Output type (see set-outputcheck example)
+
+#>
+
+#endregion
+
+#region Parameter set name
+function Test-ParameterSets
+{
+param (
+[parameter(ParameterSetName='s1')] $p1='p1 unset',
+[parameter(ParameterSetName='s2')] $p2='p2 unset',
+[parameter(ParameterSetName='s1')]
+[parameter(ParameterSetName='s2',Mandatory=$true)]
+$p3='p3 unset',
+$p4='p4 unset'
+)
+'Parameter set = ' + $PSCmdlet.ParameterSetName
+"p1=$p1 p2=$p2 p3=$p3 p4=$p4"
+}
+Get-Command Test-ParameterSets -Syntax
+Test-ParameterSets -p1 one -p4 four
+
+
+<#
+
+
+#>
+#endregion
+
+#region valuefrompipeline by property name
+function valuefromPipelinetest {
+  param (
+    [Parameter(ValueFromPipelineByPropertyName=$true)]
+    $dayofweek
+  )
+
+  "time of day is $dayofweek"
+}
+
+get-date  | valuefromPipelinetest
+
+# mini topic added ValueFromRemainingArguments=
+
+function valuefromremaningtest{
+  param(
+    $first,
+    [parameter(ValueFromRemainingArguments=$true)]
+    $others
+  )
+"first parameter $first"
+"others $others"
+}
+
+valuefromremaningtest "myfirst" "mysecond" "mythirf" "myfourth" "myfifth"
+
+
+
+<#
+This helps in bindings paraeter from the pipeline to the parameter in the
+function with same name see function valuefromPipelinetest for reference.
+#>
+
+#endregion
+
+#region validate parameter for its values
+
+# 1.validate count (specifies minimum and maximum no of elements in an array)
+function myfunc2 {
+  param (
+    # Parameter help description
+    [Parameter(Mandatory=$true)]
+    [ValidateCount(2,4)]
+    [int[]]
+    $arr
+  )
+
+
+}
+$arr = 1,2,3,4
+myfunc2 $arr
+
+#2. Validate length
+
+#3 Validate Pattern
+
+function validatepatterntest {
+  param (
+    [Parameter()]
+    [string]
+    [ValidatePattern('^[a-z][0-9]{1,7}$')]
+    $hostname
+  )
+
+ "Hostname : $hostname"
+}
+
+validatepatterntest -hostname "h12321"
+
+#4 . validate range
+
+#5.  validate sets
+
+#6. Validate script
+function scriptparams {
+  param (
+    [Parameter(ValueFromPipeline=$true)]
+    [int]
+    [ValidateScript({$_ * 2 -eq 4})]
+    $dnName
+  )
+
+}
+
+
+scriptparams 2
 #endregion
