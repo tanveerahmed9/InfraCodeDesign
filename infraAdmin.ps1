@@ -589,3 +589,94 @@ function scriptparams {
 
 scriptparams 2
 #endregion
+
+#region Default values
+function DefaultTite{
+  [CmdletBinding()]
+  param(
+   $legacy1,
+   $legacy2,
+   $legacy3
+  )
+  "Legacy 1 is $legacy1"
+  "legacy 2 is $legacy2"
+  "legacy 3 is $legacy3"
+}
+
+$PSDefaultParameterValues = @{
+  'DefaultTite:legacy1' = "Legacy 1 defaulted" ;
+  'DefaultTite:legacy2' = "Legacy 2 defaulted" ;
+  'DefaultTite:legacy3' = "Legacy 3 defaulted"
+}
+
+DefaultTite
+
+#endregion
+
+#region Remoting
+
+<#
+(Get-Item .\TrustedHosts).Value
+
+$cred = Get-Credential
+Invoke-Command -ComputerName localhost -ScriptBlock { 1..3 } -Credential $cred | sort -Descending
+the above command wont work in proper format as the semantic has been changed to make the above code
+work we need to us the input variable
+
+1..3| invoke-command -computer <ListOfComms> -scriptblock {
+"start"
+$input | sort -desc
+"end"
+}
+
+1..3 | foreach { Write-Host $_ -ForegroundColor green;
+$_; Start-Sleep 5 } | Write-Host
+
+#>
+
+# Build a multi-Machine monitoring
+
+function multi-machineMonitoring{
+  [CmdletBinding()]
+  param(
+
+    [string]$serverList = "server.txt",
+    [int] $throttleLimit = 10,
+    [int] $numProcess = 5)
+
+    #creating a common scriptblock for gathering remote VM Info for monitoring
+    $gatherInformation = {
+        param([int] $procLimit = 5)
+        {
+          $Date = Get-Date
+          $FreeSpace = (Get-PSDrive c).Free
+          $PageFaults = (Get-WmiObject Win32_PerfRawData_PerfOS_Memory).PageFaultsPersec
+          $TopCPU = Get-Process | Sort-Object CPU -Descending |  Select-Object -First $procLimit
+          $TopWS = Get-Process | Sort-Object WS -Descending | Select-Object -First $procLimit
+        }
+    }
+
+    $servers = Import-Csv $serverList | Where-Object ($_.Day -eq (get-date).DayOfWeek) | ForEach-Object ($_Name)
+    Invoke-Command -ComputerName "<RCom>" -ScriptBlock $gatherInformation -ThrottleLimit $throttleLimit
+}
+
+# check the above code running on a networked VM
+
+#compare the time taken in PSSession and Invoke-command
+
+#The two most expensive penalties with remoting are setting
+#up the session and serializing the return data
+
+# implicit remoting : This would be useful when you want to run those cmdlets which are not
+# available locally
+
+$session = New-PSSession -ComputerName "<TServer>"
+
+Invoke-Command -Session $session -ScriptBlock {get-exchangeserver -CI localhost}
+Import-PSSession -Session $session -CommandName get-exchangeserver
+get-exchangeserver ## this is like fetching a cmdlet from a module
+Remove-PSSession # PSSession removed
+
+$g = get-command -Name multi-machineMonitoring
+
+#endRegion
