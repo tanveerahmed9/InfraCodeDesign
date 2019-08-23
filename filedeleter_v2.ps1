@@ -36,10 +36,10 @@ function DeleteFilesByAgeAndExtension($pFolder, $pExtensions, $pRetainDays, $pRe
     ForEach ($itemFile in $itemFiles )
     {
 
-        if ($debugMode)
-            {
-                Write-Log -filePath $logFileLocation -content " Checking file  $itemFile"
-            }
+        # if ($debugMode)
+        #     {
+        #         Write-Log -filePath $logFileLocation -content " Checking file  $itemFile"
+        #     }
 
         $deleteflag = $false
         if ($pExtensions -eq "*.*" -or $pExtensions -eq "" )
@@ -119,7 +119,9 @@ function DeleteFilesByAgeAndExtension($pFolder, $pExtensions, $pRetainDays, $pRe
 
 function Write-Log($filePath,$content)
 {
- "$content `r"| Out-File -FilePath $filePath -Append
+ $formattedDate = get-Date -Format "dd-MM-yyyy hh:mm:ss"
+ $updatedContent = "$formattedDate - $content"
+ "$updatedContent `r"| Out-File -FilePath $filePath -Append
 }
 
 function GetFormattedDate()
