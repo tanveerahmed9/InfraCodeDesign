@@ -98,7 +98,7 @@ function DeleteFilesByAgeAndExtension($pFolder, $pExtensions, $pRetainDays, $pRe
                     if ($dateDiff -ge $pRetainInt)
                     {
 
-                        $noofDays = $dateDiff
+                        $noofDays = $dateDiff.Days
                         Write-Log -filePath $logFileLocation -content " Deleting file  $itemFile :  $noofDays  days old"
                         $script:FilesDeleted += 1
                         $script:bytesDelted += ((get-item $itemFile).Length/1kb)*1000
@@ -351,7 +351,7 @@ foreach ($configT in $config) ## traversing through element of XML and deletion 
                     $creationDate = (get-item $itemFolder).CreationTime
                     $currentDate = get-date
                     $dateDiff = $currentDate - $creationDate
-                    $ageDays = $dateDiff.TotalDays
+                    $ageDays = $dateDiff.Days
                     # check if it is empty folders
                    if(!(Get-ChildItem -Path $itemFolder).Count)
                    {
