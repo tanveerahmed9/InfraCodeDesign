@@ -120,7 +120,7 @@ function ArchiveEventlogs{
                 $content += "Clearing event log $slogname"
                 Write-Log -filename $oLogFileName -content $content
                 $log.ClearEventlog()
-                $log.clea
+
             }
         }
     }
