@@ -680,3 +680,64 @@ Remove-PSSession # PSSession removed
 $g = get-command -Name multi-machineMonitoring
 
 #endRegion
+
+#region regex in PS
+$sampleString = "Dataset1"
+
+$sampleString -match "Data[^qwertyuioplkjhajl]et" ## this will give false ^ operator
+# is exclude ops
+
+123 -match "[0-9][0-9][0-9]" # matches 2 digits characters
+
+"Server-011" -cmatch "Server-\d\d\d" #\d denotes any single digit
+"Book" -match "\w" # \w is for word character
+"`$^^^*" -match "\W"
+"wildcardcheck" -match "............." # . is a wildcard character and is usually used to validate length
+
+
+
+#Quantifiers
+"ACCOUNT NAME:    Administrator" -match "ACCOUNT NAME:\s+\w"
+"SERVER-01" -match "[A-Z]+-?\d\d"
+
+"192.168.40.10" -match "\d{3}.\d{3}.\d{2}.\d{2}"
+
+<#
+notes on quantifiers
+number of times the qualifiers katch
+
+* - Zero or more (previous element)
++ - one or more (previous element)
+? Zero or one (previous element)
+{n,m} - minimum n maximun m (previous element)
+#>
+
+
+#anchors
+"fishing" -match "^f.....g$" # ^ and $ are used to check start and end of line
+
+#excape characters
+
+"192.234.123.213" -match "\d{3}\.\d{3}\.\d{2,3}\.\d{2,3}"
+
+#groups captures and substitutions:
+
+".......Active State" -match "(\.+Active)(.+)"
+
+"The last logged on user was prod\t.b.ahmed" -match "was (?<domain>.+)\\(?<user>.+)"
+# the above line depicts a named domain and can be useful in assigning a specific
+# part of the string to a named key (since $matches is a hash)
+
+$matches.user
+$matches.domain
+$matches.Clear()
+$matches.user
+
+
+<#
+separating large string into sub-groups or sub-expressions
+$matches variables holds the values in case of grouping
+grouping is done using ().
+#>
+
+#endregion
