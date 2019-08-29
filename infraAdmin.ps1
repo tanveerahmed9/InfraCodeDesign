@@ -662,7 +662,7 @@ function multi-machineMonitoring{
 
 # check the above code running on a networked VM
 
-#compare the time taken in PSSession and Invoke-command
+#compare the time taken in PSSession and Invoke-command - This was tested in virtual box
 
 #The two most expensive penalties with remoting are setting
 #up the session and serializing the return data
@@ -734,6 +734,7 @@ $matches.Clear()
 $matches.user
 
 
+
 <#
 separating large string into sub-groups or sub-expressions
 $matches variables holds the values in case of grouping
@@ -741,3 +742,4 @@ grouping is done using ().
 #>
 
 #endregion
+
