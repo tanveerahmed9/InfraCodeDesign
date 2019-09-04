@@ -101,7 +101,7 @@ function DeleteFilesByAgeAndExtension($pFolder, $pExtensions, $pRetainDays, $pRe
                         $noofDays = $dateDiff.Days
                         Write-Log -filePath $logFileLocation -content " Deleting file  $itemFile :  $noofDays  days old"
                         $script:FilesDeleted += 1
-                        $script:bytesDelted += ((get-item $itemFile).Length/1kb)*1000
+
 
                        if (!($testMode)) # if test mode is not ON file will be deleted
                         {
@@ -355,13 +355,13 @@ foreach ($configT in $config) ## traversing through element of XML and deletion 
                     $dateDiff = $currentDate - $creationDate
                     $ageDays = $dateDiff.Days
                     # check if it is empty folders
-                   if(!(Get-ChildItem -Path $itemFolder).Count)
+                   if(!(Get-ChildItem -Path $itemFolder).Count -and $testMode -eq $false)
                    {
                     if ($ageDays -ge $configT.RetainDays) # if the folder has passed its retain days time
                     {
 
                         Write-Log -filePath $logFileLocation  -content " Deleting empty folder $itemFolder  : $ageDays days old"
-                       remove-item -Path $itemFolder -Force -Confirm:$false
+                        remove-item -Path $itemFolder -Force -Confirm:$false
                        $script:foldersDeleted += 1
 
                     }
