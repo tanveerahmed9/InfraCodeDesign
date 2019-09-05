@@ -19,6 +19,7 @@ $datastore = get-datastore | Where-Object{$_.freeSpaceGB -gt ($_.CapacityGB)*0.5
 New-Vm -Name "LTCTestonly" -VMHost $vmhost -VMFilePath "path of the vmx file"
 
 
-
-
 #endRegion
+
+#region Search through datastore to find a file which matches a pattern
+
