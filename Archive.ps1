@@ -146,6 +146,7 @@ function Archive {
     process{
         foreach ($objLogFileName in $objFiles)
         {
+            $Global:test = "testData"
             $updateDate = (Get-Item $objLogFileName).LastAccessTime
             $currentDate = Get-Date
             $diff = $currentDate - $updateDate
@@ -197,6 +198,7 @@ function Archive {
 #region controller section
 
 # fetching date and time details
+
 $sDay = (get-date).AddDays(-1).Day
 $sMonth = (get-date).AddDays(-1).Month
 $sMonthName = (Get-Culture).DateTimeFormat.GetAbbreviatedMonthName($sMonth)
@@ -231,6 +233,7 @@ If ($sMinute.Length -eq 0) {
 }
 
 # creating slogRoot
+Write-host "Change made"
 $rootFlag = 0
 if (test-path "D:\LogFiles"){
     $sLogRoot = "D:\LogFiles\"
