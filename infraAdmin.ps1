@@ -743,3 +743,27 @@ grouping is done using ().
 
 #endregion
 
+#notes from Chicago
+#region function fast implementation
+# use standard input ad o/p even when you are expecting error
+# use p by ref when you dont want the value to change in the caller context see function in same section pbrexample
+
+function pberxample{
+  $s1 = $args[0]
+  $s2 = "-appendind data to it"
+
+  $s1.value = ($s1.value) + " " + $s2 # updating the first argument since reference is assigned to first argument any changes made here will reflect in the caller's context
+  write-host "functional data is $($s1.value)"
+
+}
+$callerString = "local data unappended"
+pberxample ([ref]$callerString)
+Write-Host "local data is $callerString "
+
+
+#endregion
+
+
+
+
+#endregion
