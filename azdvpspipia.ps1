@@ -2,6 +2,17 @@
 <#you are a devops pro and you want tooling for devs to deploy their own web servers in Azure , its your job to
 build an azure devops pipeline that to support development of this tool using terraform to buid an Azure VM , configure the VM
 with DSC and run pester tests to isure that the VM was built successfully
+
+
+By the end of the section we wil be able to do following :-
+
+1. Build a temporary azure reource group
+2. Provision an Azure VM via an ARM template
+3. set up the ARM template in CI/CD pipeline
+4. Upon any change in the template , kick off a template validation test
+5. deploy the ARM template to Azure
+6. test the deployed infrastructure
+7. tear down all azure resources
 #>
 #endregion
 
@@ -9,7 +20,7 @@ with DSC and run pester tests to isure that the VM was built successfully
 
 #region Important links to note to build these things yourself:-
 
-$psversiontable
+
 
 #endregion
 
