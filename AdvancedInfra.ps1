@@ -22,7 +22,7 @@ function use-pipe {
     }
 }
 
-## git branching test
+## git branching test Refresher
 $proc = Get-CimInstance -ClassName CIM_Processor
 $runspacepool = [runspacefactory]::CreateRunspacePool(1,$proc.NumberOfLogicalProcessors, $Host)
 $runspacepool.Open()
